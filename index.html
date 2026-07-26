@@ -51,7 +51,43 @@ margin:5px;
 
 <h1>🎲 Монополия Мировая</h1>
 
+<div class="box">
 
+<h2>🎮 Комната</h2>
+
+<p id="roomStatus">
+Комната не создана
+</p>
+
+
+<button onclick="createRoom()">
+Создать комнату
+</button>
+
+
+<br>
+
+
+<input id="roomCodeInput" placeholder="Код комнаты">
+
+
+<button onclick="joinRoom()">
+Войти в комнату
+</button>
+
+
+</div>
+
+
+<div class="box">
+
+<h2>👥 Игроки в комнате</h2>
+
+<p id="playersList">
+Пока никого нет
+</p>
+
+</div>
 
 <div class="box">
 
@@ -411,8 +447,146 @@ loadPlayers();
 
 
 }
+let roomCode = "";
 
 
+function createRoom(){
+
+roomCode =
+Math.random()
+.toString(36)
+.substring(2,8)
+.toUpperCase();
+
+
+document.getElementById("history").innerHTML =
+"🎮 Создана комната: " + roomCode;
+
+
+}
+
+
+
+function joinRoom(){
+
+let code =
+prompt("Введите код комнаты");
+
+
+if(code === roomCode){
+
+document.getElementById("history").innerHTML =
+"✅ Вы вошли в игру";
+
+}
+
+else{
+
+alert("❌ Такой комнаты нет");
+
+}
+
+  }
+  
+let roomPlayers = [];
+
+
+function addPlayerToRoom(){
+
+
+roomPlayers.push(playerName);
+
+
+document.getElementById("history").innerHTML =
+"👤 Игрок добавлен в комнату";
+
+
+updatePlayersList();
+
+
+}
+
+
+
+
+function updatePlayersList(){
+
+
+let text = "";
+
+
+roomPlayers.forEach(function(player){
+
+
+text += "👤 " + player + "<br>";
+
+
+});
+
+
+let list =
+document.getElementById("playersList");
+
+
+if(list){
+
+list.innerHTML = text;
+
+}
+
+
+}
+  function createRoom(){
+
+roomCode =
+Math.random()
+.toString(36)
+.substring(2,8)
+.toUpperCase();
+
+
+roomPlayers = [];
+
+
+addPlayerToRoom();
+
+
+document.getElementById("history").innerHTML =
+"🎮 Создана комната: " + roomCode;
+
+
+}
+
+
+
+function joinRoom(){
+
+let code =
+prompt("Введите код комнаты");
+
+
+if(code === roomCode){
+
+
+addPlayerToRoom();
+
+
+document.getElementById("history").innerHTML =
+"✅ Вы вошли в игру";
+
+
+}
+
+else{
+
+
+alert("❌ Такой комнаты нет");
+
+
+}
+
+
+  }
 
 </script>
 
