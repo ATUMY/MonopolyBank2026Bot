@@ -11,10 +11,11 @@
 
 body{
 font-family:Arial;
-text-align:center;
 background:#f2f2f2;
+text-align:center;
 padding:20px;
 }
+
 
 .box{
 background:white;
@@ -22,6 +23,7 @@ padding:20px;
 border-radius:15px;
 margin-bottom:15px;
 }
+
 
 button{
 padding:12px;
@@ -31,11 +33,13 @@ border:none;
 font-size:16px;
 }
 
-input{
+
+input,select{
 padding:10px;
 font-size:16px;
-width:150px;
+margin:5px;
 }
+
 
 </style>
 
@@ -48,19 +52,26 @@ width:150px;
 <h1>🎲 Монополия Мировая</h1>
 
 
+
 <div class="box">
 
 <h2>👤 Игрок</h2>
 
-<p id="playerName">Игрок</p>
+<p id="playerName">
+Игрок
+</p>
 
 
 <h2>💰 Баланс</h2>
 
-<h1 id="money">1500 €</h1>
+<h1 id="money">
+1500 €
+</h1>
 
 
-<p id="credit">Долг: 0 €</p>
+<p id="debt">
+Долг: 0 €
+</p>
 
 </div>
 
@@ -70,11 +81,19 @@ width:150px;
 
 <input id="amount" type="number" placeholder="Сумма">
 
+
 <br>
 
-<button onclick="addMoney()">➕ Выдать</button>
 
-<button onclick="removeMoney()">➖ Снять</button>
+<button onclick="addMoney()">
+➕ Получить
+</button>
+
+
+<button onclick="removeMoney()">
+➖ Потратить
+</button>
+
 
 </div>
 
@@ -82,7 +101,7 @@ width:150px;
 
 <div class="box">
 
-<button onclick="credit()">
+<button onclick="takeCredit()">
 💳 Взять кредит
 </button>
 
@@ -90,35 +109,34 @@ width:150px;
 
 
 
-<div class="box">
+<div class="box" id="bankerBox" style="display:none;">
 
-<button onclick="savePlayer()">
-💾 Сохранить игру
-</button>
-
-</div>
+<h2>🏦 Панель банкира</h2>
 
 
+<select id="playerSelect">
 
-<div class="box">
+</select>
 
-<h2>🎲 Комната игры</h2>
-
-<button onclick="createGame()">
-Создать игру
-</button>
 
 <br>
 
-<input id="joinCode" placeholder="Код игры">
 
-<button onclick="joinGame()">
-Войти
+<input id="bankAmount" type="number" placeholder="Сумма">
+
+
+<br>
+
+
+<button onclick="giveMoney()">
+➕ Выдать игроку
 </button>
 
-<p id="gameInfo">
-Комната не создана
-</p>
+
+<button onclick="takePlayerMoney()">
+➖ Забрать у игрока
+</button>
+
 
 </div>
 
@@ -128,25 +146,27 @@ width:150px;
 
 <h2>📜 История</h2>
 
-<p id="history">Игра начата</p>
+<p id="history">
+Игра начата
+</p>
 
 </div>
-
-
-
 <script>
 
 
 let playerName = localStorage.getItem("playerName");
 
 
-if (!playerName) {
+if(!playerName){
 
 playerName = prompt("Введите имя игрока");
 
-if (!playerName)
+
+if(!playerName){
 
 playerName = "Игрок";
+
+}
 
 
 localStorage.setItem("playerName", playerName);
@@ -154,11 +174,9 @@ localStorage.setItem("playerName", playerName);
 }
 
 
-window.onload = function(){
 
-document.getElementById("playerName").innerHTML = playerName;
-
-};
+document.getElementById("playerName").innerHTML =
+playerName;
 
 
 
@@ -168,16 +186,55 @@ let debt = 0;
 
 
 
+let players = [
+
+{
+name:"Kirill",
+money:1500
+},
+
+{
+name:"Игрок 2",
+money:1500
+},
+
+{
+name:"Игрок 3",
+money:1500
+}
+
+];
+
+
+
+// Если Кирилл — открываем панель банкира
+
+if(playerName === "Kirill"){
+
+document.getElementById("bankerBox").style.display =
+"block";
+
+
+loadPlayers();
+
+}
+
+
+
+
 function update(){
+
 
 document.getElementById("money").innerHTML =
 money + " €";
 
 
-document.getElementById("credit").innerHTML =
+document.getElementById("debt").innerHTML =
 "Долг: " + debt + " €";
 
+
 }
+
 
 
 
@@ -187,16 +244,20 @@ let value =
 Number(document.getElementById("amount").value);
 
 
+
 money += value;
 
 
+
 document.getElementById("history").innerHTML =
-"➕ Выдано: " + value + " €";
+"➕ Получено: " + value + " €";
+
 
 
 update();
 
 }
+
 
 
 
@@ -206,11 +267,14 @@ let value =
 Number(document.getElementById("amount").value);
 
 
+
 money -= value;
 
 
+
 document.getElementById("history").innerHTML =
-"➖ Снято: " + value + " €";
+"➖ Потрачено: " + value + " €";
+
 
 
 update();
@@ -219,13 +283,14 @@ update();
 
 
 
-function credit(){
+
+function takeCredit(){
 
 let value =
-Number(prompt("Кредит от 1000 до 3000 €"));
+Number(prompt("Введите сумму кредита"));
 
 
-if(value>=1000 && value<=3000){
+if(value > 0){
 
 
 money += value;
@@ -233,8 +298,9 @@ money += value;
 debt += value;
 
 
+
 document.getElementById("history").innerHTML =
-"💳 Кредит +" + value + " €";
+"💳 Кредит: +" + value + " €";
 
 
 update();
@@ -244,83 +310,71 @@ update();
 
 else{
 
-alert("Можно взять только 1000-3000 €");
+alert("Неверная сумма");
 
 }
 
+
 }
+function loadPlayers(){
 
-// SUPABASE
-
-
-const SUPABASE_URL =
-"https://yzpminivmnvnnpzhzgfr.supabase.co";
+let select =
+document.getElementById("playerSelect");
 
 
-const SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6cG1pbml2bW52bm5wemh6Z2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNDgwMjQsImV4cCI6MjEwMDYyNDAyNH0.D9M0H57nCBI5yVmZZTAPZWJ91jzxrQB9ny4-VHiii8g";
+select.innerHTML = "";
 
 
+players.forEach((player,index)=>{
 
 
-// СОХРАНЕНИЕ ИГРОКА
+let option =
+document.createElement("option");
 
 
-async function savePlayer(){
+option.value = index;
 
 
-alert("Кнопка работает");
+option.textContent =
+player.name + " — " + player.money + " €";
 
 
-let result = await fetch(
-
-SUPABASE_URL + "/rest/v1/players",
-
-{
-
-method:"POST",
-
-headers:{
-
-"apikey":SUPABASE_KEY,
-
-"Authorization":"Bearer " + SUPABASE_KEY,
-
-"Content-Type":"application/json",
-
-"Prefer":"return=minimal"
-
-},
+select.appendChild(option);
 
 
-body:JSON.stringify({
-
-name:playerName,
-
-money:money,
-
-credit:debt
-
-})
+});
 
 
 }
 
-);
 
 
 
-if(result.ok){
+function giveMoney(){
 
-alert("✅ Игрок сохранён");
 
-}
+let index =
+document.getElementById("playerSelect").value;
 
-else{
 
-alert(await result.text());
+let value =
+Number(document.getElementById("bankAmount").value);
 
-}
+
+
+players[index].money += value;
+
+
+
+document.getElementById("history").innerHTML =
+"🏦 Кирилл выдал " +
+value +
+" € игроку " +
+players[index].name;
+
+
+
+loadPlayers();
 
 
 }
@@ -329,119 +383,35 @@ alert(await result.text());
 
 
 
-// СОЗДАНИЕ КОМНАТЫ
+function takePlayerMoney(){
 
 
-async function createGame(){
+let index =
+document.getElementById("playerSelect").value;
 
 
-let code = Math.random()
-.toString(36)
-.substring(2,7)
-.toUpperCase();
+let value =
+Number(document.getElementById("bankAmount").value);
 
 
 
-let result = await fetch(
-
-SUPABASE_URL + "/rest/v1/games",
-
-{
-
-method:"POST",
-
-headers:{
-
-"apikey":SUPABASE_KEY,
-
-"Authorization":"Bearer " + SUPABASE_KEY,
-
-"Content-Type":"application/json",
-
-"Prefer":"return=minimal"
-
-},
+players[index].money -= value;
 
 
-body:JSON.stringify({
 
-game_code:code,
+document.getElementById("history").innerHTML =
+"🏦 Кирилл забрал " +
+value +
+" € у игрока " +
+players[index].name;
 
-owner_id:null,
 
-status:"waiting"
 
-})
+loadPlayers();
 
 
 }
 
-);
-
-
-
-if(result.ok){
-
-document.getElementById("gameInfo").innerHTML =
-
-"🎲 Код игры: " + code;
-
-
-}
-
-else{
-
-alert(await result.text());
-
-}
-
-
-}
-
-async function joinGame(){
-
-let code = document.getElementById("joinCode").value;
-
-
-let result = await fetch(
-
-SUPABASE_URL +
-"/rest/v1/games?game_code=eq." + code,
-
-{
-
-headers:{
-
-"apikey":SUPABASE_KEY,
-
-"Authorization":"Bearer " + SUPABASE_KEY
-
-}
-
-}
-
-);
-
-
-
-let games = await result.json();
-
-
-if(games.length > 0){
-
-document.getElementById("gameInfo").innerHTML =
-"✅ Вы вошли в игру: " + code;
-
-}
-
-else{
-
-alert("❌ Такой комнаты нет");
-
-}
-
-
-}
 
 
 </script>
@@ -449,4 +419,5 @@ alert("❌ Такой комнаты нет");
 
 </body>
 
-</html>
+
+  </html>
