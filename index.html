@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Монополия Мировая</title>
+
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -11,55 +12,147 @@ body {
     padding: 20px;
 }
 
-h1 {
-    color: #222;
-}
-
-button {
-    width: 80%;
-    padding: 15px;
-    margin: 10px;
-    font-size: 18px;
-    border-radius: 10px;
-    border: none;
-}
-
-.card {
+.box {
     background: white;
     padding: 20px;
     border-radius: 15px;
-    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 12px;
+    margin: 5px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    width: 150px;
 }
 </style>
+
 </head>
 
 <body>
 
-<h1>🏦 Банк Монополии</h1>
+<h1>🎲 Монополия Мировая</h1>
 
-<div class="card">
-<h2 id="money">Баланс: 1500₽</h2>
+<div class="box">
+<h2>👤 Игрок</h2>
+<p>Максим</p>
 
-<button onclick="addMoney()">➕ Выдать 100₽</button>
-
-<button onclick="takeMoney()">➖ Снять 100₽</button>
+<h2>💰 Баланс</h2>
+<h1 id="money">1500 €</h1>
 </div>
 
+
+<div class="box">
+
+<h3>Введите сумму</h3>
+
+<input id="amount" type="number" placeholder="Сумма">
+
+<br>
+
+<button onclick="addMoney()">➕ Выдать</button>
+
+<button onclick="removeMoney()">➖ Снять</button>
+
+</div>
+
+
+<div class="box">
+
+<h2>💳 Кредит</h2>
+
+<button onclick="credit()">Получить кредит</button>
+
+<p id="credit">Долг: 0 €</p>
+
+</div>
+
+
+<div class="box">
+
+<h2>📜 История</h2>
+
+<p id="history">Игра начата</p>
+
+</div>
+
+
 <script>
+
 let money = 1500;
+let debt = 0;
+
+
+function update(){
+
+document.getElementById("money").innerHTML = money + " €";
+
+document.getElementById("credit").innerHTML =
+"Долг: " + debt + " €";
+
+}
+
 
 function addMoney(){
-    money += 100;
-    document.getElementById("money").innerHTML =
-    "Баланс: " + money + "₽";
+
+let value = Number(document.getElementById("amount").value);
+
+money += value;
+
+document.getElementById("history").innerHTML =
+"➕ Выдано: " + value + " €";
+
+update();
+
 }
 
-function takeMoney(){
-    money -= 100;
-    document.getElementById("money").innerHTML =
-    "Баланс: " + money + "₽";
+
+function removeMoney(){
+
+let value = Number(document.getElementById("amount").value);
+
+money -= value;
+
+document.getElementById("history").innerHTML =
+"➖ Снято: " + value + " €";
+
+update();
+
 }
+
+
+function credit(){
+
+let value = Number(prompt("Введите кредит от 1000 до 3000 €"));
+
+if(value >= 1000 && value <= 3000){
+
+money += value;
+debt += value;
+
+document.getElementById("history").innerHTML =
+"💳 Кредит: +" + value + " €";
+
+update();
+
+}
+
+else{
+
+alert("Кредит только от 1000 до 3000 €");
+
+}
+
+}
+
 </script>
 
 </body>
-    </html>
+</html>
