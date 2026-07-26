@@ -102,6 +102,22 @@ width:150px;
 
 <div class="box">
 
+<h2>🎲 Комната игры</h2>
+
+<button onclick="createGame()">
+Создать игру
+</button>
+
+<p id="gameInfo">
+Комната не создана
+</p>
+
+</div>
+
+
+
+<div class="box">
+
 <h2>📜 История</h2>
 
 <p id="history">Игра начата</p>
@@ -110,20 +126,30 @@ width:150px;
 
 
 
-
 <script>
 
 
 let playerName = localStorage.getItem("playerName");
 
+
 if (!playerName) {
-    playerName = prompt("Введите имя игрока");
-    if (!playerName) playerName = "Игрок";
-    localStorage.setItem("playerName", playerName);
+
+playerName = prompt("Введите имя игрока");
+
+if (!playerName)
+
+playerName = "Игрок";
+
+
+localStorage.setItem("playerName", playerName);
+
 }
 
+
 window.onload = function(){
-    document.getElementById("playerName").innerHTML = playerName;
+
+document.getElementById("playerName").innerHTML = playerName;
+
 };
 
 
@@ -147,7 +173,6 @@ document.getElementById("credit").innerHTML =
 
 
 
-
 function addMoney(){
 
 let value =
@@ -167,8 +192,6 @@ update();
 
 
 
-
-
 function removeMoney(){
 
 let value =
@@ -185,8 +208,6 @@ document.getElementById("history").innerHTML =
 update();
 
 }
-
-
 
 
 
@@ -221,11 +242,6 @@ alert("Можно взять только 1000-3000 €");
 
 }
 
-
-
-
-
-
 // SUPABASE
 
 
@@ -239,12 +255,13 @@ const SUPABASE_KEY =
 
 
 
+// СОХРАНЕНИЕ ИГРОКА
+
 
 async function savePlayer(){
 
 
 alert("Кнопка работает");
-
 
 
 let result = await fetch(
@@ -302,9 +319,82 @@ alert(await result.text());
 
 
 
+
+
+// СОЗДАНИЕ КОМНАТЫ
+
+
+async function createGame(){
+
+
+let code = Math.random()
+.toString(36)
+.substring(2,7)
+.toUpperCase();
+
+
+
+let result = await fetch(
+
+SUPABASE_URL + "/rest/v1/games",
+
+{
+
+method:"POST",
+
+headers:{
+
+"apikey":SUPABASE_KEY,
+
+"Authorization":"Bearer " + SUPABASE_KEY,
+
+"Content-Type":"application/json",
+
+"Prefer":"return=minimal"
+
+},
+
+
+body:JSON.stringify({
+
+game_code:code,
+
+owner_id:null,
+
+status:"waiting"
+
+})
+
+
+}
+
+);
+
+
+
+if(result.ok){
+
+document.getElementById("gameInfo").innerHTML =
+
+"🎲 Код игры: " + code;
+
+
+}
+
+else{
+
+alert(await result.text());
+
+}
+
+
+}
+
+
+
 </script>
 
 
 </body>
 
-  </html>
+</html>
