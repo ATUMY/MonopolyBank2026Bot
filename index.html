@@ -1,57 +1,76 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Монополия Мировая</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #f2f2f2;
-    padding: 20px;
+
+body{
+font-family:Arial;
+text-align:center;
+background:#f2f2f2;
+padding:20px;
 }
 
-.box {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 15px;
+.box{
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
 }
 
-button {
-    padding: 12px;
-    margin: 5px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
+button{
+padding:12px;
+margin:5px;
+border-radius:10px;
+border:none;
+font-size:16px;
 }
 
-input {
-    padding: 10px;
-    font-size: 16px;
-    width: 150px;
+input{
+padding:10px;
+font-size:16px;
+width:150px;
 }
+
 </style>
 
 </head>
 
+
 <body>
+
 
 <h1>🎲 Монополия Мировая</h1>
 
+
 <div class="box">
+
 <h2>👤 Игрок</h2>
-<p>Максим</p>
+
+<p id="player">
+Максим
+</p>
+
 
 <h2>💰 Баланс</h2>
-<h1 id="money">1500 €</h1>
+
+<h1 id="money">
+1500 €
+</h1>
+
+
+<p id="credit">
+Долг: 0 €
+</p>
+
 </div>
 
 
-<div class="box">
 
-<h3>Введите сумму</h3>
+<div class="box">
 
 <input id="amount" type="number" placeholder="Сумма">
 
@@ -64,35 +83,53 @@ input {
 </div>
 
 
+
 <div class="box">
 
-<h2>💳 Кредит</h2>
-
-<button onclick="credit()">Получить кредит</button>
-
-<p id="credit">Долг: 0 €</p>
+<button onclick="credit()">
+💳 Взять кредит
+</button>
 
 </div>
+
+
+
+<div class="box">
+
+<button onclick="savePlayer()">
+💾 Сохранить игру
+</button>
+
+</div>
+
 
 
 <div class="box">
 
 <h2>📜 История</h2>
 
-<p id="history">Игра начата</p>
+<p id="history">
+Игра начата
+</p>
 
 </div>
 
 
+
+
 <script>
 
+
 let money = 1500;
+
 let debt = 0;
+
 
 
 function update(){
 
-document.getElementById("money").innerHTML = money + " €";
+document.getElementById("money").innerHTML =
+money + " €";
 
 document.getElementById("credit").innerHTML =
 "Долг: " + debt + " €";
@@ -100,45 +137,57 @@ document.getElementById("credit").innerHTML =
 }
 
 
+
 function addMoney(){
 
-let value = Number(document.getElementById("amount").value);
+let value =
+Number(document.getElementById("amount").value);
 
 money += value;
 
 document.getElementById("history").innerHTML =
-"➕ Выдано: " + value + " €";
+"➕ Получено: " + value + " €";
 
 update();
 
 }
+
+
 
 
 function removeMoney(){
 
-let value = Number(document.getElementById("amount").value);
+let value =
+Number(document.getElementById("amount").value);
 
 money -= value;
 
 document.getElementById("history").innerHTML =
-"➖ Снято: " + value + " €";
+"➖ Потрачено: " + value + " €";
 
 update();
 
 }
 
 
+
+
 function credit(){
 
-let value = Number(prompt("Введите кредит от 1000 до 3000 €"));
+let value =
+Number(prompt("Введите кредит от 1000 до 3000 €"));
 
-if(value >= 1000 && value <= 3000){
+
+if(value>=1000 && value<=3000){
 
 money += value;
+
 debt += value;
 
+
 document.getElementById("history").innerHTML =
-"💳 Кредит: +" + value + " €";
+"💳 Кредит +" + value + " €";
+
 
 update();
 
@@ -146,13 +195,92 @@ update();
 
 else{
 
-alert("Кредит только от 1000 до 3000 €");
+alert("Кредит только 1000-3000 €");
 
 }
 
 }
+
+
+
+
+// ===== SUPABASE =====
+
+
+const SUPABASE_URL =
+"https://yzpminivmnvnnpzhzgfr.supabase.co";
+
+
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6cG1pbml2bW52bm5wemh6Z2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNDgwMjQsImV4cCI6MjEwMDYyNDAyNH0.D9M0H57nCBI5yVmZZTAPZWJ91jzxrQB9ny4-VHiii8g";
+
+
+
+
+
+async function savePlayer(){
+
+
+let result = await fetch(
+
+SUPABASE_URL + "/rest/v1/players",
+
+{
+
+method:"POST",
+
+headers:{
+
+"apikey":SUPABASE_KEY,
+
+"Authorization":
+"Bearer " + SUPABASE_KEY,
+
+"Content-Type":"application/json",
+
+"Prefer":"return=minimal"
+
+},
+
+
+body:JSON.stringify({
+
+name:"Максим",
+
+money:money,
+
+credit:debt
+
+})
+
+}
+
+);
+
+
+
+if(result.ok){
+
+alert("✅ Сохранено");
+
+}
+
+else{
+
+alert("❌ Ошибка");
+
+console.log(await result.text());
+
+}
+
+
+}
+
+
 
 </script>
 
+
 </body>
+
     </html>
