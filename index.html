@@ -1,11 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Монополия Мировая</title>
+<meta charset="UTF-8">
+<title>Монополия Мировая</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f2f2f2;
+    padding: 20px;
+}
+
+h1 {
+    color: #222;
+}
+
+button {
+    width: 80%;
+    padding: 15px;
+    margin: 10px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+}
+</style>
 </head>
+
 <body>
-    <h1>🏦 Банк Монополии</h1>
-    <p>Первая версия приложения работает!</p>
+
+<h1>🏦 Банк Монополии</h1>
+
+<div class="card">
+<h2 id="money">Баланс: 1500₽</h2>
+
+<button onclick="addMoney()">➕ Выдать 100₽</button>
+
+<button onclick="takeMoney()">➖ Снять 100₽</button>
+</div>
+
+<script>
+let money = 1500;
+
+function addMoney(){
+    money += 100;
+    document.getElementById("money").innerHTML =
+    "Баланс: " + money + "₽";
+}
+
+function takeMoney(){
+    money -= 100;
+    document.getElementById("money").innerHTML =
+    "Баланс: " + money + "₽";
+}
+</script>
+
 </body>
-</html>
+    </html>
